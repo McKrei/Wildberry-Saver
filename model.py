@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 
 
 
+
+
 engine = create_engine('sqlite:///WB.db')
 Session = sessionmaker(bind=engine)
 session = Session()
