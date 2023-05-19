@@ -5,9 +5,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 
 
-
-
-
 engine = create_engine('sqlite:///WB.db')
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -30,6 +27,9 @@ class Query(Base):
     discount = Column(Float)
     created_at = Column(DateTime, default=datetime.now)
     user = relationship("User", backref="queries")
+
+    def __str__(self):
+        return f'{self.query = }'
 
 # таблица товары
 class Product(Base):
