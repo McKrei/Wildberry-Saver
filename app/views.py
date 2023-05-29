@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for
 
 from . import app, db
 from .forms import NewQuery, EmailSearch
-from .models import Query
+from .models import Query, User
 
 
 @app.route('/')
@@ -14,18 +14,24 @@ def index():
 @app.route('/history_search', methods=['GET', 'POST'])
 def history_search():
     form = EmailSearch()
-    # ToDo: сделать вывод истории запросов
-    queryes = []
+    queries = Query.query.all()
     if form.validate_on_submit():
         email = form.email.data
-        # ToDo: сделать вывод истории запросов по email
-        # queryes =
+        user = User.query.filter_by(email=email).first()
+        queries = user.queries
         form = EmailSearch()
-    return render_template('history_search.html',
-                            title='История запросов',
-                            form=form,
-                            queryes=queryes,
-                            )
+
+    queries = [{
+        'query_title': 'Кроссовки',
+        'discount': 22,
+        'created_at': '12-10-12',
+    }]
+    return render_template(
+        'history_search.html',
+        title='История запросов',
+        form=form,
+        queries=queries,
+    )
 
 @app.route('/notifications')
 def notifications_page():
@@ -43,8 +49,7 @@ def notifications_page():
 
 @app.route('/help')
 def help_page():
-    return render_template('help.html',
-                           title='Помощь')
+    return render_template('help.html', title='Помощь')
 
 
 @app.route('/add_query', methods=['GET', 'POST'])
@@ -59,6 +64,4 @@ def add_query():
         # db.session.add(query_obj)
         # db.session.commit()
         return redirect(url_for('history_search'))
-    return render_template('add_query.html',
-                            title='Новый запрос',
-                            form=form)
+    return render_template('add_query.html', title='Новый запрос', form=form)

@@ -21,6 +21,7 @@ class NewQuery(FlaskForm):
         'Процент скидки',
         validators=[DataRequired(message="Поле не должно быть пустым")]
     )
+    submit = SubmitField('Добавить запрос')
 
 
 class EmailSearch(FlaskForm):
@@ -29,3 +30,4 @@ class EmailSearch(FlaskForm):
         validators=[DataRequired(message="Поле не должно быть пустым"),
                     Email(message='Введите email')]
     )
+    submit = SubmitField('Поиск')
