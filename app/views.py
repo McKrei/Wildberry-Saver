@@ -33,14 +33,33 @@ def history_search():
         queries=queries,
     )
 
-@app.route('/notifications')
+@app.route('/notifications', methods=['GET', 'POST'])
 def notifications_page():
     form = EmailSearch()
-    # ToDo: сделать вывод уведомлений
-    notifications = []
+    notifications = Query.query.all()
     if form.validate_on_submit():
         email = form.email.data
+        user = User.query.filter_by(email=email).first()
+        notifications = user.notifications
         form = EmailSearch()
+
+    notifications = [{
+        'name': 'Кроссовки',
+        'discount': 22,
+        'created_at': '12-10-12',
+        'notif': 'YES',
+        'date_notif': '12-11-12',
+        'good_id': '12',
+    },
+    {
+        'name': 'Платья',
+        'discount': "60",
+        'created_at': '12-10-12',
+        'notif': 'YES',
+        'date_notif': '12-11-12',
+        'good_id': '1200',
+    }]
+
     return render_template('notifications.html',
                             title='Уведомления',
                             form=form,
@@ -63,5 +82,6 @@ def add_query():
         # ToDo: сделать добавление в базу пользователя и квери
         # db.session.add(query_obj)
         # db.session.commit()
-        return redirect(url_for('history_search'))
+        return redirect(url_for('history_search'), email=email)
+        # ToDo: редирект на history_search должен происходить с уже введенным имейлом пользователя, как это сделать?
     return render_template('add_query.html', title='Новый запрос', form=form)

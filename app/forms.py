@@ -5,21 +5,26 @@ from wtforms.validators import DataRequired, Length, Optional, Email
 
 class NewQuery(FlaskForm):
     user = StringField(
-        'Название',
-        validators=[DataRequired(message="Поле не должно быть пустым")]
-    )
-    email = EmailField(
-        'Введите email',
+        'Имя пользователя',
         validators=[DataRequired(message="Поле не должно быть пустым"),
-                    Email(message='Введите email')]
+                    Length(max=10, message='Введите заголовок длиной до 10 символов')]
     )
+
+    email = StringField(
+        'Email для уведомления',
+        validators=[Email(message='Введите email'), Length(max=30, message='Введите email длиной до 30 символов')]
+    )
+
     query = StringField(
-        'Запрос поиска',
-        validators=[DataRequired(message="Поле не должно быть пустым")]
+        'Введите название товара',
+        validators=[DataRequired(message="Поле не должно быть пустым"),
+                    Length(max=255, message='Введите заголовок длиной до 255 символов')]
     )
-    percent = IntegerField(
-        'Процент скидки',
-        validators=[DataRequired(message="Поле не должно быть пустым")]
+
+    percent = StringField(
+        'Введите желаемую скидку, в %',
+        validators=[DataRequired(message="Поле не должно быть пустым"),
+                    Length(max=2, message='От 0 до 99, без %')]
     )
     submit = SubmitField('Добавить запрос')
 
@@ -27,7 +32,6 @@ class NewQuery(FlaskForm):
 class EmailSearch(FlaskForm):
     email = EmailField(
         'Введите email',
-        validators=[DataRequired(message="Поле не должно быть пустым"),
-                    Email(message='Введите email')]
+        validators=[Email(message='Введите email'), Length(max=30, message='Введите Емаил длиной до 30 символов')]
     )
     submit = SubmitField('Поиск')
