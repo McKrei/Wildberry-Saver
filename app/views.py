@@ -2,8 +2,9 @@ from flask import render_template, redirect, url_for
 
 from . import app, db
 from .forms import NewQuery, EmailSearch
-from .models import Query, User
-
+from .models import Query, User, Notification
+from .parsing import run_task
+from .crud import add_query_to_database, get_notifications
 
 @app.route('/')
 def index():
@@ -18,14 +19,9 @@ def history_search():
     if form.validate_on_submit():
         email = form.email.data
         user = User.query.filter_by(email=email).first()
-        queries = user.queries
-        form = EmailSearch()
-
-    queries = [{
-        'query_title': 'Кроссовки',
-        'discount': 22,
-        'created_at': '12-10-12',
-    }]
+        if user:
+            queries = user.queries
+            form = EmailSearch()
     return render_template(
         'history_search.html',
         title='История запросов',
@@ -36,35 +32,15 @@ def history_search():
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications_page():
     form = EmailSearch()
-    notifications = Query.query.all()
+    notifications = get_notifications()
     if form.validate_on_submit():
         email = form.email.data
-        user = User.query.filter_by(email=email).first()
-        notifications = user.notifications
+        notifications = get_notifications(email)
         form = EmailSearch()
-
-    notifications = [{
-        'name': 'Кроссовки',
-        'discount': 22,
-        'created_at': '12-10-12',
-        'notif': 'YES',
-        'date_notif': '12-11-12',
-        'good_id': '12',
-    },
-    {
-        'name': 'Платья',
-        'discount': "60",
-        'created_at': '12-10-12',
-        'notif': 'YES',
-        'date_notif': '12-11-12',
-        'good_id': '1200',
-    }]
-
     return render_template('notifications.html',
                             title='Уведомления',
                             form=form,
-                            notifications=notifications,
-                            )
+                            notifications=notifications,)
 
 @app.route('/help')
 def help_page():
@@ -79,9 +55,12 @@ def add_query():
         email = form.email.data
         query = form.query.data
         percent = form.percent.data
-        # ToDo: сделать добавление в базу пользователя и квери
-        # db.session.add(query_obj)
-        # db.session.commit()
-        return redirect(url_for('history_search'), email=email)
-        # ToDo: редирект на history_search должен происходить с уже введенным имейлом пользователя, как это сделать?
+        add_query_to_database(user, email, query, percent)
+        return redirect(url_for('history_search'))
     return render_template('add_query.html', title='Новый запрос', form=form)
+
+
+@app.route('/get_new_data')
+def get_new_data():
+    run_task()
+    return 'OK!'
