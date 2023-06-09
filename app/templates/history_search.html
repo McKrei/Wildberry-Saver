@@ -1,6 +1,6 @@
 {% extends "includes/base.html" %}
 {% block content %}
-<h1>Ваш текст... </h1>
+<h1>История запросов</h1>
 <hr>
 <form method="POST" action="" novalidate>
   {{ form.csrf_token }}
@@ -18,10 +18,12 @@
     {% endfor %}
     <div class="col-auto">
       <span id="passwordHelpInline" class="form-text">
-        Must be 8-20 characters long.
+        Введите email длиной до 30 символов.
       </span>
     </div>
-    {{ form.submit(class="btn btn-primary btn-lg") }}
+    <div class="d-grid gap-2 d-md-block">
+    {{ form.submit(class="btn btn-dark btn-lg") }}
+    </div>
   </div>
 
 <div class="row my-5">
