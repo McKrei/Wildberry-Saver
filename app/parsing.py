@@ -32,7 +32,6 @@ def search_right_product(query):
 
 def run_task():
     queries = Query.query.all()  # Получаем все запросы из базы
-    print(queries)
     for query in queries:
         all_products = search_right_product(query.query_title)
         for i in range(0, len(all_products)): # Идем по списку всех товаров
@@ -41,17 +40,17 @@ def run_task():
             current_price = int(priced/100)
             product_id = all_products[i].get('product_id')
             data = add_product_history_data(product_id, product_name, current_price, query)
-            print(data)
-            # if data:
-                # send_email(*data)
+            if data:
+                print(data)
+                send_email(*data)
 
 
 def start_parsing():
-    schedule.every(10).seconds.do(run_task)
+    schedule.every(60).seconds.do(run_task)
     while True:
         try:
             schedule.run_pending()
         except Exception as E:
             print(E)
         finally:
-            time.sleep(4)
+            time.sleep(10)
