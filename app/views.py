@@ -29,6 +29,7 @@ def history_search():
         queries=queries,
     )
 
+
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications_page():
     form = EmailSearch()
@@ -41,6 +42,7 @@ def notifications_page():
                             title='Уведомления',
                             form=form,
                             notifications=notifications,)
+
 
 @app.route('/help')
 def help_page():

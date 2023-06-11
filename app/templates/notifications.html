@@ -34,21 +34,32 @@
   <table class="table">
     <thead>
       <tr>
-        <th scope="col">Название</th>
-        <th scope="col">Скидка</th>
-        <th scope="col">Дата поиска</th>
-        <th scope="col">Дата уведомления</th>
+        <!-- product_name
+discount
+date_query
+created_at
+product_id -->
+        <th scope="col">Запрос</th>
+        <th scope="col">Дата запроса</th>
+        <th scope="col">Название товара</th>
         <th scope="col">Код товара</th>
+        <th scope="col">Скидка</th>
+        <th scope="col">Дата уведомления</th>
       </tr>
     </thead>
     <tbody>
       {% for notification in notifications %}
       <tr>
-        <td>{{notification.name}}</td>
+        <td>
+          <a href="https://www.wildberries.ru/catalog/0/search.aspx?search={{notification.query}}">{{notification.query}}</a>
+        </td>
+        <td>{{notification.date_query}}</td>
+        <td>{{notification.product_name}}</td>
+        <td>
+          <a href="https://www.wildberries.ru/catalog/{{notification.product_id}}/detail.aspx">{{notification.product_id}}</a>
+        </td>
         <td>{{notification.discount}}</td>
         <td>{{notification.created_at}}</td>
-        <td>{{notification.date_notif}}</td>
-        <td>{{notification.good_id}}</td>
       </tr>
       {% endfor %}
     </tbody>

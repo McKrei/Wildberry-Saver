@@ -4,7 +4,7 @@ import schedule
 from . import db
 from .models import Query
 from .crud import add_product_history_data
-from send_mail import send_email
+from .send_mail import send_email
 
 
 def search_right_product(query):
@@ -32,6 +32,7 @@ def search_right_product(query):
 
 def run_task():
     queries = Query.query.all()  # Получаем все запросы из базы
+    print(queries)
     for query in queries:
         all_products = search_right_product(query.query_title)
         for i in range(0, len(all_products)): # Идем по списку всех товаров
@@ -40,19 +41,17 @@ def run_task():
             current_price = int(priced/100)
             product_id = all_products[i].get('product_id')
             data = add_product_history_data(product_id, product_name, current_price, query)
-            if data:
-                send_email(*data)
+            print(data)
+            # if data:
+                # send_email(*data)
 
 
-def main():
-    schedule.every(6).hours.do(run_task)
+def start_parsing():
+    schedule.every(10).seconds.do(run_task)
     while True:
         try:
             schedule.run_pending()
         except Exception as E:
-            time.sleep(1)
-
-
-if __name__ == '__main__':
-    main()
-
+            print(E)
+        finally:
+            time.sleep(4)

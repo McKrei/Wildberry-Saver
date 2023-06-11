@@ -56,7 +56,7 @@ class Notification(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
 
     product = db.relationship("Product", viewonly=True)
-    query = db.relationship("Query", viewonly=True)
+    query_obj = db.relationship("Query", viewonly=True)
 
 
 class History(db.Model):

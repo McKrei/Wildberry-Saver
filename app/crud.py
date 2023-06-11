@@ -6,23 +6,29 @@ def get_notifications(email=None):
     '''
     Название 	Скидка 	Дата поиска 	Отправка уведомления 	Код товара
     Product.name Query.discount Notification.created_at  Product.id
-
     '''
-    notifications = models.Notification.query.all()
-    for notification in notifications:
-        product_name = notification.product.name
-        discount = notification.query.discount
-        created_at = notification.created_at
-        product_id = notification.product.id
+    def create_dict(notifications):
+        return [
+            {
+                'query': notification.query_obj.query_title,
+                'product_name': notification.product.name,
+                'discount': notification.query_obj.discount,
+                'date_query': notification.query_obj.created_at.strftime('%d %b %H:%M'),
+                'created_at': notification.created_at.strftime('%d %b %H:%M'),
+                'product_id': notification.product.id,
+            } for notification in notifications
+        ]
 
-    user = models.User.query.filter_by(email=email).first()
-    for query in user.queries:
-        for notification in query.notifications:
-            product_name = notification.product.name
-            discount = notification.query.discount
-            created_at = notification.created_at
-            product_id = notification.product.id
-    ...
+    if email:
+        result = []
+        user = models.User.query.filter_by(email=email).first()
+        if user:
+            for query in user.queries:
+                result += create_dict(query.notifications)
+            return result
+
+    else:
+        return create_dict(models.Notification.query.all())
 
 
 def add_query_to_database(username, email, query, discount):
@@ -58,8 +64,8 @@ def add_product_history_data(product_id, product_name, current_price, query_obj)
     if current_price < initial_price - (initial_price * (discount / 100)):
         # Record a notification if the current price is lower than the discounted initial price
         notification = models.Notification(
-            product=product,
-            query=query_obj,
+            product_id=product_id,
+            query_id=query_obj.id,
             previous_price=initial_price,
             current_price=current_price
         )
