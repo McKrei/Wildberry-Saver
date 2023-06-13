@@ -33,7 +33,6 @@ def get_notifications(email=None):
 
 def add_query_to_database(username, email, query, discount):
     user = models.User.query.filter_by(email=email).first()
-
     if not user:
         # Create a new user if the email doesn't exist
         user = models.User(name=username, email=email)
@@ -63,6 +62,9 @@ def add_product_history_data(product_id, product_name, current_price, query_obj)
 
     if current_price < initial_price - (initial_price * (discount / 100)):
         # Record a notification if the current price is lower than the discounted initial price
+        nf = models.Notification.query.filter_by(product_id=product_id, query_id=query_obj.id).first()
+        if current_price > nf.current_price:
+            return
         notification = models.Notification(
             product_id=product_id,
             query_id=query_obj.id,

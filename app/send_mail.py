@@ -1,10 +1,11 @@
 import smtplib
 
+
 def send_email(query, product_name, discount, current_price, product_id, email):
     """
         Отправка электронного письма (email)
         """
-    from_addr = "WB-servis@yandex.ru"
+    from_addr = "WB-servis@wildberry-saver.ru"
     to_addr = email # Получить емайл из базы по запросу и айди пользователя
     encode = 'utf-8'
     subject = "Уведомление о снижении цены."
@@ -31,6 +32,4 @@ def send_email(query, product_name, discount, current_price, product_id, email):
         smtp.sendmail(from_addr, to_addr, body.encode(encode))
         smtp.quit()
     except smtplib.SMTPException as err:
-        print('Что - то пошло не так...')
-        raise err
-
+        print(f'Что - то пошло не так... {err}')
